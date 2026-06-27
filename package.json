@@ -1,0 +1,27 @@
+{
+  "name": "imo-rules-mcp",
+  "version": "1.0.0",
+  "description": "MCP server exposing a local IMO maritime rules & regulations corpus (offline semantic search + read) to AI clients. Bring your own corpus.",
+  "type": "module",
+  "license": "MIT",
+  "keywords": ["mcp", "model-context-protocol", "imo", "maritime", "solas", "marpol", "semantic-search"],
+  "bin": { "imo-rules-mcp": "src/server.ts" },
+  "scripts": {
+    "start": "tsx src/server.ts",
+    "import-corpus": "node scripts/import-corpus.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "@huggingface/transformers": "^3.0.2",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "better-sqlite3": "^11.7.0",
+    "tsx": "^4.19.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0"
+  }
+}

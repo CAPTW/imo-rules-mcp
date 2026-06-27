@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.log
+
+# The corpus is NOT distributed with this repo — it is your own licensed data.
+# Keep it out of the repository (and out of any PUBLIC repo) to avoid
+# redistributing copyrighted regulation text. See README.
+corpus/

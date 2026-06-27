@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "imo-rules": {
+      "command": "npx",
+      "args": ["tsx", "src/server.ts"]
+    }
+  }
+}
