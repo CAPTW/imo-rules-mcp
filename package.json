@@ -1,7 +1,7 @@
 {
   "name": "imo-rules-mcp",
   "version": "1.0.0",
-  "description": "MCP server exposing a local IMO maritime rules & regulations corpus (offline semantic search + read) to AI clients. Bring your own corpus.",
+  "description": "MCP server exposing a local IMO maritime rules & regulations corpus for offline semantic search and reading. Bring your own corpus.",
   "type": "module",
   "license": "MIT",
   "keywords": ["mcp", "model-context-protocol", "imo", "maritime", "solas", "marpol", "semantic-search"],

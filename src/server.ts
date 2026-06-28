@@ -1,19 +1,19 @@
 /**
  * IMO maritime rules MCP server (stdio).
  *
- * Exposes a local corpus of IMO rules & regulations — the SQLite corpus plus an
- * offline semantic-search index — as MCP tools so any MCP client (Claude Code,
- * Claude Desktop, Cursor, …) can search and read the regulations:
+ * Exposes a local corpus of IMO rules & regulations, backed by the SQLite corpus
+ * plus an offline semantic-search index, as MCP tools so compatible local clients
+ * can search and read the regulations:
  *
- *   imo_semantic_search  – meaning-based search (local embeddings, per locale)
- *   imo_keyword_search   – substring search over titles + body text
- *   imo_get_document     – full normalized text of one regulation + citations
- *   imo_list_instruments – the top-level instruments (SOLAS, MARPOL, …)
- *   imo_browse           – navigate the instrument/chapter/regulation tree
- *   imo_get_citations    – cross-references out of one document
- *   imo_stats            – corpus overview
+ *   imo_semantic_search  meaning-based search (local embeddings, per locale)
+ *   imo_keyword_search   substring search over titles + body text
+ *   imo_get_document     full normalized text of one regulation + citations
+ *   imo_list_instruments top-level instruments (SOLAS, MARPOL, etc.)
+ *   imo_browse           navigate the instrument/chapter/regulation tree
+ *   imo_get_citations    cross-references out of one document
+ *   imo_stats            corpus overview
  *
- * Read-only and offline — it serves a local corpus you provide. The corpus is
+ * Read-only and offline; it serves a local corpus you provide. The corpus is
  * NOT bundled in this repository; point IMO_DB / IMO_RAG at your own copy (see
  * README), or place it under ./corpus/.
  */
