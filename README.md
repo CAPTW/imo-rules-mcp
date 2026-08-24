@@ -1,103 +1,97 @@
-# imo-rules-mcp
+<!-- BRAND_REFRESH_2026_08_25 -->
+<div align="center">
 
-An **MCP server** that exposes a local corpus of **IMO maritime rules and
-regulations** (SOLAS, MARPOL, STCW, the codes, etc.) to MCP-compatible local
-clients for **offline semantic search and reading**. No crawler, no network; it
-serves a local corpus you provide.
+# ⚓ imo-rules-mcp
 
-## Bring Your Own Corpus
+### Bring your corpus. Keep the rules local.
 
-This repository contains **only the server code**. It does **not** include any
-regulation text. The IMO rules and regulations corpus is **copyrighted** by its
-rights holders and is licensed to you separately. **Do not commit it to a public
-repository or redistribute it.** The `corpus/` directory is gitignored for this
-reason. If you choose to bundle a corpus into a repo for convenience, **keep that
-repository private.**
+**A read-only MCP server for offline semantic search, keyword search, document retrieval, citation traversal, and structured browsing across a locally supplied IMO regulatory corpus.**
 
-## What You Provide
+![MCP](https://img.shields.io/badge/protocol-MCP-7C3AED?style=for-the-badge)
+![Runtime](https://img.shields.io/badge/runtime-Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Mode](https://img.shields.io/badge/mode-offline%20%7C%20read--only-22C55E?style=for-the-badge)
+![Corpus](https://img.shields.io/badge/corpus-bring%20your%20own-F97316?style=for-the-badge)
 
-A corpus directory (default `./corpus/`) containing:
+[Tools](#mcp-tools) · [Set up a corpus](#quickstart) · [Rights boundary](#corpus-and-rights-boundary) · [Full technical reference](README.technical.2026-08-25.md)
 
+</div>
+
+---
+
+> **The server is open. The corpus is yours to license, store, and protect.**
+
+`imo-rules-mcp` exposes a local corpus of maritime instruments to MCP-compatible clients without crawling the web or redistributing regulation text.
+
+## MCP tools
+
+| Tool | Purpose |
+|---|---|
+| `imo_semantic_search` | Meaning-based retrieval with ranked regulations, breadcrumbs, snippets, and document keys. |
+| `imo_keyword_search` | Literal title or body search. |
+| `imo_get_document` | Retrieve one normalized regulation with navigation context and citations. |
+| `imo_list_instruments` / `imo_browse` | Navigate instruments, chapters, and regulations. |
+| `imo_get_citations` | Follow outbound cross-references. |
+| `imo_stats` | Inspect corpus coverage and index state. |
+
+## Architecture
+
+```mermaid
+flowchart LR
+    A["Licensed local corpus"] --> B["SQLite documents"]
+    A --> C["TOC tree"]
+    A --> D["Local embedding index"]
+    B --> E["MCP server"]
+    C --> E
+    D --> E
+    E --> F["Offline MCP client"]
 ```
-corpus/
-  imo-corpus.sqlite     # SQLite corpus (documents, nodes, citations)
-  toc.json              # navigation tree (instruments, chapters, regulations)
-  rag/
-    config.json
-    meta.json
-    vectors.f32         # one embedding per page
-    models/             # local embedding model
-```
 
-This layout is produced by the companion **KRcrawl** exporter (`export:full-help`
-+ `rag:index`). Import it with:
+## Quickstart
+
+Install:
 
 ```bash
 npm install
+```
+
+Import a compatible exported corpus:
+
+```bash
 node scripts/import-corpus.mjs /path/to/KRcrawl
 ```
 
-Or skip the copy and point the server at an existing build with env vars.
-
-## Tools
-
-| Tool | What it does |
-|---|---|
-| `imo_semantic_search` | Meaning-based search: ranked regulations with instrument breadcrumb, snippet, and `docKey`. |
-| `imo_keyword_search` | Substring search over titles, optionally body text. |
-| `imo_get_document` | Full normalized text of one regulation by `docKey`, plus breadcrumb and citations. |
-| `imo_list_instruments` | Top-level instruments such as SOLAS, MARPOL, STCW, and the codes. |
-| `imo_browse` | Navigate the instrument, chapter, and regulation tree. |
-| `imo_get_citations` | Outbound cross-references from one document. |
-| `imo_stats` | Corpus overview. |
-
-`imo_semantic_search` lazily loads the bundled local embedding model on first
-call; other tools are instant. The server is read-only and offline.
-
-## Use It
-
-A project-scoped [`.mcp.json`](.mcp.json) is included for MCP hosts that support
-repository-local configuration. For hosts that use a global config file, add a
-server entry like this and point `cwd` at this repo so `./corpus` resolves:
-
-```json
-{
-  "mcpServers": {
-    "imo-rules": {
-      "command": "npx",
-      "args": ["tsx", "src/server.ts"],
-      "cwd": "/path/to/imo-rules-mcp"
-    }
-  }
-}
-```
-
-Smoke-test standalone:
+Start the stdio server:
 
 ```bash
 npm start
 ```
 
-The process speaks MCP over stdio; press Ctrl-C to stop.
+A repository-scoped `.mcp.json` is included for hosts that support project-local MCP configuration.
 
-## Configuration
+## Corpus and rights boundary
 
-| Var | Default | Meaning |
-|---|---|---|
-| `IMO_DB` | `corpus/imo-corpus.sqlite` | SQLite corpus path |
-| `IMO_RAG` | `corpus/rag` | semantic-search index dir |
-| `IMO_TOC` | `<IMO_RAG>/../toc.json` | navigation tree; override if it lives elsewhere |
-| `IMO_ROOT_KEY` | `0000.00e0` | top-level tree key for `imo_list_instruments` |
+This repository contains **server code only**. It does not ship SOLAS, MARPOL, STCW, IMO Codes, or any other regulation corpus.
 
-To run against an existing KRcrawl build in place, set:
+- Supply only material you are licensed to use.
+- Keep `corpus/` outside version control.
+- Do not publish or redistribute proprietary regulation text.
+- If a convenience bundle includes corpus data, keep that repository private and apply the applicable rights controls.
+- Server-code licensing does not grant rights to the corpus.
 
-```bash
-IMO_DB=<KRcrawl>/data/krcon.sqlite
-IMO_RAG=<KRcrawl>/dist/help/full-clone/assets/rag
-IMO_TOC=<KRcrawl>/dist/help/full-clone/toc.json
-```
+## Runtime contract
+
+- Read-only tools only.
+- No crawler and no required network path.
+- Semantic search loads its local model/index on demand.
+- Other tools operate directly on the local corpus structures.
+- Corpus completeness, currency, interpretation, and legal authority remain external responsibilities.
+
+## Full technical reference
+
+The original detailed README — including the expected corpus layout, environment variables, client configuration, and tool-by-tool behavior — is preserved unchanged at:
+
+**[README.technical.2026-08-25.md](README.technical.2026-08-25.md)**
 
 ## License
 
-Server code: MIT (see [LICENSE](LICENSE)). The license covers the code only,
-**not** any corpus data you supply.
+Server code is MIT. Corpus data is excluded from that grant.
